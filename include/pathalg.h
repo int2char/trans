@@ -11,8 +11,8 @@
 #include<sys/time.h>
 #define ML 50
 #define BS 5
-#define WD 7
-#define LY 100
+#define WD 8
+#define LY 1
 #define inf INT_MAX/2
 using namespace std;
 class pairless {
