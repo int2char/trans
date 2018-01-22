@@ -12,7 +12,7 @@
 #define ML 50
 #define BS 5
 #define WD 8
-#define LY 1
+#define LY 100
 #define inf INT_MAX/2
 using namespace std;
 class pairless {
@@ -281,7 +281,7 @@ class dijkstor:public algbase{
         		if(esign[i]<0)
         			count++;
         	cout<<"resort"<<endl;
-        	for(int i=0;i<edges.size()*LY;i++)
+        	/*for(int i=0;i<edges.size()*LY;i++)
 				{
         			if(esign[i]<0)
         			{
@@ -313,7 +313,7 @@ class dijkstor:public algbase{
 							cout<<endl;
 						}
         			}
-        		}
+        		}*/
         	cout<<"flow is: "<<flow<<endl;
         	cout<<"count is: "<<count<<endl;
         	cout<<"die is: "<<cc<<endl;
