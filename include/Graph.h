@@ -31,14 +31,13 @@ class Graph
         vector<vector<int>>relate,neartable;
         algbase&router1;
         algbase&router2;
-        bool cookedge(int s,int t,int dbw)
+        pair<int,int>prepush(int s,int t,int n,ofstream& out)
         {
-            router1.routalg(s,t,dbw);
-        }
-        bool prepush(int s,int t,int bw)
-        {
-        	router1.prepush(s,t,bw);
-        	router2.prepush(s,t,bw);
+        	pair<int,int>a=router1.prepush(s,t,0);
+        	pair<int,int>b=router2.prepush(s,t,0);
+        	if(a.first!=b.first)
+        		out<<"erro! "<<LY<<" "<<n<<" "<<s<<" "<<t<<endl;
+        	return make_pair(a.second,b.second);\
         }
         virtual ~Graph(){};
     protected:
