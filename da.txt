@@ -1,0 +1,495 @@
+./include/pathalg.h(218): warning: missing return statement at end of non-void function "dijkstor::routalg"
+
+./include/pathalg.h(168): warning: variable "tnode" was set but never used
+
+./include/pathalg.h(227): warning: variable "start" was set but never used
+
+./include/pathalg.h(227): warning: variable "end" was set but never used
+
+./include/pathalg.h(272): warning: variable "iasd" was declared but never referenced
+
+./include/pathalg.h(417): warning: missing return statement at end of non-void function "dijkstor::checkhop"
+
+./include/pathalg.h(448): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(497): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(544): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(595): warning: missing return statement at end of non-void function "parallelor::prepush"
+
+./include/pathalg.h(620): warning: missing return statement at end of non-void function "parallelpush::cutcake"
+
+./include/pathalg.h(623): warning: missing return statement at end of non-void function "parallelpush::routalg"
+
+parallelor.cu(199): warning: variable "cc" was declared but never referenced
+
+./include/pathalg.h(218): warning: missing return statement at end of non-void function "dijkstor::routalg"
+
+./include/pathalg.h(168): warning: variable "tnode" was set but never used
+
+./include/pathalg.h(227): warning: variable "start" was set but never used
+
+./include/pathalg.h(227): warning: variable "end" was set but never used
+
+./include/pathalg.h(272): warning: variable "iasd" was declared but never referenced
+
+./include/pathalg.h(417): warning: missing return statement at end of non-void function "dijkstor::checkhop"
+
+./include/pathalg.h(448): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(497): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(544): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(595): warning: missing return statement at end of non-void function "parallelor::prepush"
+
+./include/pathalg.h(620): warning: missing return statement at end of non-void function "parallelpush::cutcake"
+
+./include/pathalg.h(623): warning: missing return statement at end of non-void function "parallelpush::routalg"
+
+parallelor.cu(199): warning: variable "cc" was declared but never referenced
+
+./include/pathalg.h(218): warning: missing return statement at end of non-void function "dijkstor::routalg"
+
+./include/pathalg.h(168): warning: variable "tnode" was set but never used
+
+./include/pathalg.h(227): warning: variable "start" was set but never used
+
+./include/pathalg.h(227): warning: variable "end" was set but never used
+
+./include/pathalg.h(272): warning: variable "iasd" was declared but never referenced
+
+./include/pathalg.h(417): warning: missing return statement at end of non-void function "dijkstor::checkhop"
+
+./include/pathalg.h(448): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(497): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(544): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(595): warning: missing return statement at end of non-void function "parallelor::prepush"
+
+./include/pathalg.h(620): warning: missing return statement at end of non-void function "parallelpush::cutcake"
+
+./include/pathalg.h(623): warning: missing return statement at end of non-void function "parallelpush::routalg"
+
+parallelpush.cu(221): warning: variable "h" was declared but never referenced
+
+./include/pathalg.h(218): warning: missing return statement at end of non-void function "dijkstor::routalg"
+
+./include/pathalg.h(168): warning: variable "tnode" was set but never used
+
+./include/pathalg.h(227): warning: variable "start" was set but never used
+
+./include/pathalg.h(227): warning: variable "end" was set but never used
+
+./include/pathalg.h(272): warning: variable "iasd" was declared but never referenced
+
+./include/pathalg.h(417): warning: missing return statement at end of non-void function "dijkstor::checkhop"
+
+./include/pathalg.h(448): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(497): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(544): warning: variable "prn" was declared but never referenced
+
+./include/pathalg.h(595): warning: missing return statement at end of non-void function "parallelor::prepush"
+
+./include/pathalg.h(620): warning: missing return statement at end of non-void function "parallelpush::cutcake"
+
+./include/pathalg.h(623): warning: missing return statement at end of non-void function "parallelpush::routalg"
+
+parallelpush.cu(221): warning: variable "h" was declared but never referenced
+
+fuck c++,rubish!!!!
+before gen graph
+gen graph success
+606
+pnodesize is :100
+ in top sort 
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+
+serial: 1 100 18 48
+flow is: 5
+before gen graph
+gen graph success
+1194
+pnodesize is :200
+ in top sort 
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+
+serial: 1 200 18 48
+flow is: 8
+before gen graph
+gen graph success
+2448
+pnodesize is :400
+ in top sort 
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+
+serial: 1 400 18 48
+flow is: 5
+before gen graph
+gen graph success
+4802
+pnodesize is :800
+ in top sort 
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+
+serial: 1 800 18 48
+flow is: 5
+before gen graph
+gen graph success
+9668
+pnodesize is :1600
+ in top sort 
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+
+serial: 1 1600 18 48
+flow is: 3
+before gen graph
+gen graph success
+18830
+pnodesize is :3200
+ in top sort 
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1
+
+serial: 1 3200 18 48
+flow is: 1

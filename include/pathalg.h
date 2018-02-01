@@ -12,7 +12,7 @@
 #include<queue>
 #define ML 50
 #define BS 5
-#define WD 6
+#define WD 5
 #ifndef LY 
 	#define LY 1
 #endif
@@ -146,7 +146,7 @@ class dijkstor:public algbase{
 				int starte=k*pesize;
 				for(int i=0;i<edges.size();i++)
 					{
-					cout<<edges[i].s<<" "<<edges[i].t<<endl;
+					//cout<<edges[i].s<<" "<<edges[i].t<<endl;
 					ynein[edges[i].s+k*pnodesize].push_back((i+k*edges.size()+1));
 					ynein[edges[i].t+k*pnodesize].push_back(-(i+k*edges.size()+1));
 					for(int j=0;j<W-1;j++)
@@ -227,7 +227,7 @@ class dijkstor:public algbase{
         	time_t start,end;
         	start=clock();
         	cout<<endl;
-        	cout<<"**********************************"<<endl;
+        	//cout<<"**********************************"<<endl;
         	cout<<"serial: "<<LY<<" "<<pnodesize<<" "<<s<<" "<<t<<endl;
 			for(int i=0;i<LY*nodenum;i++)
 			{
@@ -249,7 +249,7 @@ class dijkstor:public algbase{
         			height[startn+s*W+i]=INT_MAX;
         		}
         	int mc=0;
-        	cout<<"all -1 is "<<endl;
+        	//cout<<"all -1 is "<<endl;
         	for(int k=0;k<LY;k++)
         		{
         			for(int i=0;i<edges.size();i++)
@@ -258,11 +258,13 @@ class dijkstor:public algbase{
         					value[k*nodenum+W*edges[i].t+1]=1;
         					//cout<<k*nodenum+W*edges[i].t+1<<endl;
         					esign[k*pesize+i]*=-1;
-        					cout<<k*pesize+i<<endl;
+        					int node=k*nodenum+W*edges[i].t+1;
+        					//cout<<node<<" "<<node/W<<" "<<node%W<<endl;
+        					//cout<<k*pesize+i<<endl;
         					mc++;
         					}
         		}
-        	cout<<"mc is : "<<mc<<endl;
+        	//cout<<"mc is : "<<mc<<endl;
         	//cout<<"gggg"<<endl;
         	int mark=1;
         	int cc=0;
@@ -271,11 +273,10 @@ class dijkstor:public algbase{
         	int fff=INT_MAX;
         	int iasd=50;
         	while(mark==1)
+        	//for(int l=0;l<1300;l++)
         	{
         		mark=0;
         		time++;
-				//if(time<=50)
-        		//cout<<"******************************************************* "<<time-1<<endl;
         		for(int i=0;i<nodenum*LY;i++)
 					{
         				int bi=i%nodenum;
@@ -298,7 +299,7 @@ class dijkstor:public algbase{
 								if(value[i]>0&&(b1||b2))
 								{
 									//cout<<"in"<<endl;
-									if(((to-1)%nodenum)/W!=s)
+									if(to<=s*W||to>=s*W+W)
 									{
 										if(height[i]==height[to]+1)
 										{
@@ -311,12 +312,11 @@ class dijkstor:public algbase{
 											/*if(esign[eid]>0)
 												cout<<"rigpush "<<i/W<<"["<<i%W<<"]"<<"("<<height[i]<<")"<<"to "<<to/W<<"["<<to%W<<"]"<<"("<<height[to]<<")"<<endl;
 											else
-												cout<<"lefpush "<<i/W<<"["<<i%W<<"]"<<"("<<height[i]<<")"<<"to "<<to/W<<"["<<to%W<<"]"<<"("<<height[to]<<")"<<endl;
-											*/
+												cout<<"lefpush "<<i/W<<"["<<i%W<<"]"<<"("<<height[i]<<")"<<"to "<<to/W<<"["<<to%W<<"]"<<"("<<height[to]<<")"<<endl;*/
 											value[i]--;
 											value[to]++;
 											if(to/W==t){
-												cout<<"got it "<<to<<" "<<i/W<<" "<<time<<" "<<endl;
+												//cout<<"got it "<<to<<" "<<i/W<<" "<<time<<" "<<endl;
 												flow++;
 											}
 											int off=to%W;
@@ -342,12 +342,12 @@ class dijkstor:public algbase{
     				}
         		cc++;
         	}
-        	cout<<"this is "<<endl;
+        	//cout<<"this is "<<endl;
         	for(int i=0;i<nodenum;i++)
         		if(value[i]!=0)
         			{
         				
-        				cout<<i<<" "<<i%W<<" "<<value[i]<<endl;
+        				//cout<<i<<" "<<i%W<<" "<<value[i]<<endl;
         				//int bi=i%nodenum;
         				//if(bi/W==t)flow+=value[i];
         			}
@@ -357,7 +357,7 @@ class dijkstor:public algbase{
         	for(int i=0;i<edges.size()*LY;i++) 
         		if(esign[i]<0)
         		{	count++;
-        			cout<<i<<" "<<edges[i].s<<" "<<edges[i].t<<" "<<abs(esign[i])<<" "<<endl;
+        			//cout<<i<<" "<<edges[i].s<<" "<<edges[i].t<<" "<<abs(esign[i])<<" "<<endl;
         			/*for(int k=0;k<W;k++)
         				cout<<height[edges[k].s*W+i]<<" ";
         			cout<<endl;
@@ -366,18 +366,20 @@ class dijkstor:public algbase{
         		}
         		else
         			esign[i]=0;
-        	cout<<"check r"<<endl;
+        	//cout<<"check r"<<endl;
         	checkhop(s,t);
         	end=clock();
-        	cout<<"CPU time is: "<<end-start<<endl;
-        	cout<<"count is: "<<count<<endl;
+        	//cout<<"CPU time is: "<<end-start<<endl;
+        	//cout<<"count is: "<<count<<endl;
         	//cout<<"die is: "<<cc<<endl;
         	//return make_pair(flow,end-start);
-        	return make_pair(1000,fff);
+        	int maxf=checkR(s,t);
+        	return make_pair(flow,maxf);
         };
         int checkhop(int s,int t)
         {
-        	cout<<"in check hop"<<endl;
+        	//cout<<"in check hop"<<endl;
+        	int max=0;
         	for(int i=1;i<W;i++)
         	{
         		int tnode=t*W+i;
@@ -386,10 +388,17 @@ class dijkstor:public algbase{
         			
         			int node=tnode;
         			int off=i;
+        			max=0;
         			while(node!=s*W)
         			//for(int j=0;j<3;j++)
         			{
-        				cout<<node/W<<" ";
+        				max++;
+        				if(max>WD)
+        					{
+        						cout<<"loop occurs,erro happened!"<<endl;
+        						break;
+        					}
+        				//cout<<node/W<<" ";
         				//cout<<"bie chongfeng "<<node<<" "<<endl;
         				for(int k=0;k<nein[node].size();k++)
         					{
@@ -404,7 +413,7 @@ class dijkstor:public algbase{
         						}
         					}
         			}
-        			cout<<endl;
+        			//cout<<endl;
         			value[tnode]--;
         		}
         	}
@@ -456,53 +465,121 @@ class dijkstor:public algbase{
 			cout<<endl;
 			return (tnode>=0)?1:0;
         };
+        int trance(int s,int t)
+        {
+        	int maxf=0;
+        	int tnode=1;
+        	while(tnode>=0)
+			{
+				tnode=-1;
+				vector<int>visited(pnodesize,0);
+				vector<int>pre(pnodesize,-1);
+				vector<int>pree(pnodesize,-1);
+				int vflag=1;
+				queue<int>que;
+				for(int i=0;i<W;i++)
+					que.push(s);
+				visited[s]=1;
+				while(!que.empty()&&vflag)
+				{
+					int node=que.front();
+					que.pop();
+					for(int i=0;i<ynein[node].size();i++)
+					{
+						int ne=ynein[node][i];
+						int eid=abs(ne)-1;
+						if(esign[eid]<0&&ne>0)
+						{	
+							int to=edges[eid].t;
+							if(visited[to]==0){
+								pre[to]=node;
+								pree[to]=eid;
+								que.push(to);
+								visited[to]=1;
+							}
+							if(to==t){tnode=to;vflag=0;break;}
+						}
+					}
+				}
+				int prn=tnode;
+				int len=0;
+				//cout<<"tnode is "<<tnode<<endl;
+				if(tnode>=0)
+				{
+					int prn=tnode;
+					while(prn!=s)
+					{
+						len++;
+						esign[pree[prn]]*=-1;
+						//cout<<prn<<endl;
+						prn=pre[prn];
+					}
+					//cout<<prn<<" ";
+				}
+				if(len<=WD&&tnode>=0)maxf++;
+			}
+        	return maxf;
+        }
         int checkR(int s,int t)
                 {
-        			int tnode=-1;
-        			vector<int>visited(pnodesize,0);
-        			vector<int>pre(pnodesize,-1);
-        			vector<int>pree(pnodesize,-1);
-        			int vflag=1;
-        			queue<int>que;
-        			for(int i=0;i<W;i++)
-        				que.push(s);
-        			visited[s]=1;
-        			while(!que.empty()&&vflag)
+        			cout<<"in mzx flow"<<endl;
+        			for(int i=0;i<edges.size();i++)
+        				esign[i]=1;
+        			int tnode=10;
+        			int maxf=0;
+        			while(tnode>=0)
         			{
-        				int node=que.front();
-        				que.pop();
-        				for(int i=0;i<ynein[node].size();i++)
-        				{
-        					int ne=ynein[node][i];
-        					int eid=abs(ne)-1;
-        					if(esign[eid]*ne<0)
-        					{	
-        						int to=edges[eid].t;
-        						if(visited[to]==0){
-        							pre[to]=node;
-        							pree[to]=eid;
-        							que.push(to);
-        							visited[to]=1;
-        						}
-        						if(to==t){tnode=to;vflag=0;break;}
-        					}
-        				}
+						tnode=-1;
+						vector<int>visited(pnodesize,0);
+						vector<int>pre(pnodesize,-1);
+						vector<int>pree(pnodesize,-1);
+						int vflag=1;
+						queue<int>que;
+						for(int i=0;i<W;i++)
+							que.push(s);
+						visited[s]=1;
+						while(!que.empty()&&vflag)
+						{
+							int node=que.front();
+							que.pop();
+							for(int i=0;i<ynein[node].size();i++)
+							{
+								int ne=ynein[node][i];
+								int eid=abs(ne)-1;
+								if(esign[eid]*ne>0)
+								{	
+									int to=edges[eid].t;
+									if(visited[to]==0){
+										pre[to]=node;
+										pree[to]=eid;
+										que.push(to);
+										visited[to]=1;
+									}
+									if(to==t){tnode=to;vflag=0;break;}
+								}
+							}
+						}
+						int prn=tnode;
+						int len=0;
+						if(tnode>=0)
+						{
+							int prn=tnode;
+							while(prn!=s)
+							{
+								len++;
+								esign[pree[prn]]*=-1;
+								prn=pre[prn];
+							}
+							//cout<<prn<<" ";
+						}
+						if(len<=WD&&tnode>=0)maxf++;
         			}
-        			int prn=tnode;
-        			if(tnode>=0)
-        			{
-        				int prn=tnode;
-        				while(prn!=s)
-        				{
-        					cout<<prn<<" ";
-        					esign[pree[prn]]*=-1;
-        					prn=pre[prn];
-        				}
-        				cout<<prn<<" ";
-        			}
-        			cout<<endl;
-        			return (tnode>=0)?1:0;
-                };
+        			//cout<<"max f is "<<maxf<<endl;
+        			maxf=trance(s,t);
+        			cout<<"max ff is "<<maxf<<endl;
+        			return maxf;
+         };
+        
         int check(int s,int t)
         {
 			int tnode=-1;

@@ -872,3 +872,53 @@ erro! 1 100 8 6
 erro! 1 100 18 48
 erro! 1 100 18 48
 erro! 1 100 18 48
+erro! 1 100 18 48
+fuck c++,rubish!!!!
+before gen graph
+gen graph success
+606
+pnodesize is :100
+ in top sort 
+
+serial: 1 100 18 48
+flow is: 5
+before gen graph
+gen graph success
+614
+pnodesize is :100
+ in top sort 
+
+serial: 1 100 18 48
+flow is: 5
+before gen graph
+gen graph success
+596
+pnodesize is :100
+ in top sort 
+
+serial: 1 100 18 48
+flow is: 9
+before gen graph
+gen graph success
+620
+pnodesize is :100
+ in top sort 
+
+serial: 1 100 18 48
+flow is: 4
+before gen graph
+gen graph success
+600
+pnodesize is :100
+ in top sort 
+
+serial: 1 100 18 48
+flow is: 4
+before gen graph
+gen graph success
+634
+pnodesize is :100
+ in top sort 
+
+serial: 1 100 18 48
+flow is: 7
