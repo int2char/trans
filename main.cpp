@@ -8,11 +8,28 @@ int main()
     parallelpush d1=parallelpush();
     dijkstor d2=dijkstor();
     for(int n=100;n<101;n*=2)
-    	{	ERGraph graph(50,1,d2,d1);
-    		cout<<"graph finied"<<endl;
+    	{	ERGraph graph(100,1,d2,d1);
+    		graph.prepush(18,48,100,outfile);
+    		/*cout<<"graph finied"<<endl;
     		double s=0,p=0;
+    		int min=INT_MAX;
     		//for(int i=0;i<20;i++)
-    		graph.prepush(30,18,100,outfile);
+    		int bs=0,bt=0;
+    		for(int j=0;j<10;j++)
+    			for(int i=0;i<10;i++)
+    				{
+    				int out=1000000;
+    				if(i!=j)
+    					out=graph.prepush(i,j,100,outfile).first;
+    				if(out<min)
+    					{
+    						bs=i;
+    						bt=j;
+    						min=out;
+    					}
+    				}
+    		cout<<"all out "<<endl;
+    		cout<<bs<<" "<<bt<<" "<<min<<endl;
     		/*for(int i=0;i<20;i++)
     			{
     				int s=rand()%n;

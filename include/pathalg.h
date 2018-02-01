@@ -12,8 +12,8 @@
 #include<queue>
 #define ML 50
 #define BS 5
-#define WD 8
-#ifndef LY
+#define WD 6
+#ifndef LY 
 	#define LY 1
 #endif
 #define inf INT_MAX/2
@@ -58,6 +58,7 @@ class dijkstor:public algbase{
 		vector<int>order;
 		vector<vector<int>>neie;
 		vector<vector<int>>nein;
+		vector<vector<int>>ynein;
 		vector<int>height;
 		vector<int>value;
 		vector<int>esign;
@@ -128,28 +129,36 @@ class dijkstor:public algbase{
 			W=WD+1;
 			vector<vector<int>>tneie(nodenum*LY,vector<int>());
 			vector<vector<int>>tnein(nodenum*LY,vector<int>());
+			vector<vector<int>>tynein(pnodesize*LY,vector<int>());
 			vector<int>theight(nodenum*LY,0);
 			vector<int>tvalue(nodenum*LY,0);
 			vector<int>tesign(edges.size()*LY,1);
 			neie=tneie;
 			nein=tnein;
+			ynein=tynein;
 			height=theight;
 			value=tvalue;
 			esign=tesign;
+			cout<<"pnodesize is :"<<pnodesize<<endl;
 			for(int k=0;k<LY;k++)
 			{
 				int startn=k*nodenum;
 				int starte=k*pesize;
 				for(int i=0;i<edges.size();i++)
-					for(int j=0;j<W-1;j++)
 					{
-						int s=edges[i].s*W+j+startn;
-						int t=edges[i].t*W+j+1+startn;
-	        			ancestor[t]++;
-						neie[s].push_back(i+1+starte);
-						neie[t].push_back(-(i+1+starte));
-						nein[s].push_back(t);
-						nein[t].push_back(s);
+					cout<<edges[i].s<<" "<<edges[i].t<<endl;
+					ynein[edges[i].s+k*pnodesize].push_back((i+k*edges.size()+1));
+					ynein[edges[i].t+k*pnodesize].push_back(-(i+k*edges.size()+1));
+					for(int j=0;j<W-1;j++)
+						{
+							int s=edges[i].s*W+j+startn;
+							int t=edges[i].t*W+j+1+startn;
+							ancestor[t]++;
+							neie[s].push_back(i+1+starte);
+							neie[t].push_back(-(i+1+starte));
+							nein[s].push_back(t);
+							nein[t].push_back(s);
+						}
 					}
 			}
 			topsort();
@@ -217,12 +226,6 @@ class dijkstor:public algbase{
         {
         	time_t start,end;
         	start=clock();
-        	for(int j=0;j<neie[440].size();j++)
-			{
-				//int eid=abs(neie[pre][j])-1;
-				//if(neie[pre][j]<0&&esign[eid]<0)
-				cout<<neie[440][j]<<" ";
-			}
         	cout<<endl;
         	cout<<"**********************************"<<endl;
         	cout<<"serial: "<<LY<<" "<<pnodesize<<" "<<s<<" "<<t<<endl;
@@ -241,20 +244,38 @@ class dijkstor:public algbase{
         		}
         	for(int k=0;k<LY;k++)
         		{
+        		int startn=k*nodenum;
+        		for(int i=1;i<W;i++)
+        			height[startn+s*W+i]=INT_MAX;
+        		}
+        	int mc=0;
+        	cout<<"all -1 is "<<endl;
+        	for(int k=0;k<LY;k++)
+        		{
         			for(int i=0;i<edges.size();i++)
-        				if(edges[i].s==s)
+        				if(edges[i].s==s)//&&(edges[i].t==5||edges[i].t==19))
         					{
         					value[k*nodenum+W*edges[i].t+1]=1;
-        					cout<<k*nodenum+W*edges[i].t+1<<endl;
+        					//cout<<k*nodenum+W*edges[i].t+1<<endl;
         					esign[k*pesize+i]*=-1;
+        					cout<<k*pesize+i<<endl;
+        					mc++;
         					}
         		}
-        	cout<<"gggg"<<endl;
+        	cout<<"mc is : "<<mc<<endl;
+        	//cout<<"gggg"<<endl;
         	int mark=1;
         	int cc=0;
+        	int flow=0;
+        	int time=0;
+        	int fff=INT_MAX;
+        	int iasd=50;
         	while(mark==1)
         	{
         		mark=0;
+        		time++;
+				//if(time<=50)
+        		//cout<<"******************************************************* "<<time-1<<endl;
         		for(int i=0;i<nodenum*LY;i++)
 					{
         				int bi=i%nodenum;
@@ -264,58 +285,224 @@ class dijkstor:public algbase{
 							int minheight=INT_MAX;
 							for(int j=0;j<nein[i].size();j++)
 							{
-								if(value[i]>0&&(esign[abs(neie[i][j])-1]*neie[i][j])>0)
+								int eid=abs(neie[i][j])-1;
+								bool btest=(esign[eid]*neie[i][j]>0)?true:false;
+								bool b1=(esign[eid]>0&&neie[i][j]>0)?true:false;
+								bool b2=(esign[eid]<0&&neie[i][j]<0&&i%W==abs(esign[eid]))?true:false;
+								int to=nein[i][j];
+								/*if(i==1)
 								{
-									int to=nein[i][j];
-									if(height[i]==height[to]+1)
+									
+									cout<<height[to]<<" "<<esign[eid]<<"["<<eid<<"]"<<" "<<neie[i][j]<<endl;
+								}*/
+								if(value[i]>0&&(b1||b2))
+								{
+									//cout<<"in"<<endl;
+									if(((to-1)%nodenum)/W!=s)
 									{
-										value[i]--;
-										value[to]++;
-										esign[abs(neie[i][j])-1]*=-1;
-										mark=1;
-										flag=1;
+										if(height[i]==height[to]+1)
+										{
+											//if(abs(neie[i][j])-1==24)
+											if(height[i]>W+1&&fff==INT_MAX){
+												cout<<"time is "<<time-1<<endl;
+												fff=time;
+											}
+											//if(time<=50)
+											/*if(esign[eid]>0)
+												cout<<"rigpush "<<i/W<<"["<<i%W<<"]"<<"("<<height[i]<<")"<<"to "<<to/W<<"["<<to%W<<"]"<<"("<<height[to]<<")"<<endl;
+											else
+												cout<<"lefpush "<<i/W<<"["<<i%W<<"]"<<"("<<height[i]<<")"<<"to "<<to/W<<"["<<to%W<<"]"<<"("<<height[to]<<")"<<endl;
+											*/
+											value[i]--;
+											value[to]++;
+											if(to/W==t){
+												cout<<"got it "<<to<<" "<<i/W<<" "<<time<<" "<<endl;
+												flow++;
+											}
+											int off=to%W;
+											esign[eid]=(esign[eid]>0)?-off:1;
+											mark=1;
+											flag=1;
+										}
+										else
+											{
+											//cout<<height[to]<<endl;
+											minheight=min(minheight,height[to]);
+											}
 									}
-									else
-										minheight=min(minheight,height[to]);
 								}
 							}
 							if(value[i]>0&&minheight<INT_MAX&&flag==0)
-									height[i]=minheight+1,mark=1;
+									{
+										//if(i==1)
+											//cout<<"updating"<<minheight+1<<endl;
+										height[i]=minheight+1,mark=1;
+									}
 						}
     				}
         		cc++;
         	}
-        	int flow=0;
-        	for(int i=0;i<LY*W*pnodesize;i++)
+        	cout<<"this is "<<endl;
+        	for(int i=0;i<nodenum;i++)
         		if(value[i]!=0)
         			{
-        				int bi=i%nodenum;
-        				if(bi/W==t)flow+=value[i];
+        				
+        				cout<<i<<" "<<i%W<<" "<<value[i]<<endl;
+        				//int bi=i%nodenum;
+        				//if(bi/W==t)flow+=value[i];
         			}
         	cout<<"flow is: "<<flow<<endl;
         	int count=0;
+        	
         	for(int i=0;i<edges.size()*LY;i++) 
         		if(esign[i]<0)
-        		{	
-        			cout<<i<<" "<<edges[i].s<<" "<<edges[i].t<<endl;
-        			for(int k=0;k<W;k++)
+        		{	count++;
+        			cout<<i<<" "<<edges[i].s<<" "<<edges[i].t<<" "<<abs(esign[i])<<" "<<endl;
+        			/*for(int k=0;k<W;k++)
         				cout<<height[edges[k].s*W+i]<<" ";
         			cout<<endl;
         			for(int k=0;k<W;k++)
-        			    cout<<height[edges[k].t*W+i]<<" ";
-        			cout<<endl;
-        			
+        			    cout<<height[edges[k].t*W+i]<<" ";*/
         		}
         		else
         			esign[i]=0;
-        	while(check(s,t));
+        	cout<<"check r"<<endl;
+        	checkhop(s,t);
         	end=clock();
         	cout<<"CPU time is: "<<end-start<<endl;
-        	//cout<<"count is: "<<count<<endl;
+        	cout<<"count is: "<<count<<endl;
         	//cout<<"die is: "<<cc<<endl;
         	//return make_pair(flow,end-start);
-        	return make_pair(0,0);
+        	return make_pair(1000,fff);
+        };
+        int checkhop(int s,int t)
+        {
+        	cout<<"in check hop"<<endl;
+        	for(int i=1;i<W;i++)
+        	{
+        		int tnode=t*W+i;
+        		while(value[tnode]>0)
+        		{
+        			
+        			int node=tnode;
+        			int off=i;
+        			while(node!=s*W)
+        			//for(int j=0;j<3;j++)
+        			{
+        				cout<<node/W<<" ";
+        				//cout<<"bie chongfeng "<<node<<" "<<endl;
+        				for(int k=0;k<nein[node].size();k++)
+        					{
+        					int eid=abs(neie[node][k])-1;
+        					//cout<<neie[node][k]<<" "<<esign[eid]<<endl;
+        					if(neie[node][k]<0&&(-esign[eid]==off))
+        						{
+        						esign[eid]*=-1;
+        						off--;
+        						node=edges[eid].s*W+off;
+        						break;
+        						}
+        					}
+        			}
+        			cout<<endl;
+        			value[tnode]--;
+        		}
+        	}
         }
+        int checkback(int s,int t)
+        {
+        	int tnode=-1;
+			vector<int>visited(nodenum,0);
+			vector<int>pre(nodenum,-1);
+			vector<int>pree(nodenum,-1);
+			int vflag=1;
+			queue<int>que;
+			que.push(s*W);
+			visited[s*W]=1;
+			while(!que.empty()&&vflag)
+			{
+				int node=que.front();
+				que.pop();
+				for(int i=0;i<nein[node].size();i++)
+				{
+					int eid=abs(neie[node][i])-1;
+					if(esign[eid]<0)
+					{	
+						int to=nein[node][i];
+						if(visited[to]==0){
+							pre[to]=node;
+							pree[to]=eid;
+							que.push(to);
+							visited[to]=1;
+						}
+						if(to/W==t){tnode=to;vflag=0;break;}
+					}
+				}
+			}
+			int prn=tnode;
+			//cout<<"tnode is "<<tnode<<endl;
+			cout<<tnode%W<<endl;
+			if(tnode>=0)
+			{
+				int prn=tnode;
+				while(prn!=s*W)
+				{
+					cout<<prn/W<<" ";
+					esign[pree[prn]]*=-1;
+					prn=pre[prn];
+				}
+				cout<<prn/W<<" ";
+			}
+			cout<<endl;
+			return (tnode>=0)?1:0;
+        };
+        int checkR(int s,int t)
+                {
+        			int tnode=-1;
+        			vector<int>visited(pnodesize,0);
+        			vector<int>pre(pnodesize,-1);
+        			vector<int>pree(pnodesize,-1);
+        			int vflag=1;
+        			queue<int>que;
+        			for(int i=0;i<W;i++)
+        				que.push(s);
+        			visited[s]=1;
+        			while(!que.empty()&&vflag)
+        			{
+        				int node=que.front();
+        				que.pop();
+        				for(int i=0;i<ynein[node].size();i++)
+        				{
+        					int ne=ynein[node][i];
+        					int eid=abs(ne)-1;
+        					if(esign[eid]*ne<0)
+        					{	
+        						int to=edges[eid].t;
+        						if(visited[to]==0){
+        							pre[to]=node;
+        							pree[to]=eid;
+        							que.push(to);
+        							visited[to]=1;
+        						}
+        						if(to==t){tnode=to;vflag=0;break;}
+        					}
+        				}
+        			}
+        			int prn=tnode;
+        			if(tnode>=0)
+        			{
+        				int prn=tnode;
+        				while(prn!=s)
+        				{
+        					cout<<prn<<" ";
+        					esign[pree[prn]]*=-1;
+        					prn=pre[prn];
+        				}
+        				cout<<prn<<" ";
+        			}
+        			cout<<endl;
+        			return (tnode>=0)?1:0;
+                };
         int check(int s,int t)
         {
 			int tnode=-1;
@@ -354,7 +541,7 @@ class dijkstor:public algbase{
 				int prn=tnode;
 				while(prn/W!=s)
 				{
-					cout<<prn/W<<" ";
+					cout<<prn<<" ";
 					esign[pree[prn]]*=-1;
 					prn=pre[prn];
 				}
@@ -419,9 +606,11 @@ class parallelpush:public algbase
 		int *st,*te,*dev_st,*dev_te;
 		int W;
 		void dellocate();
+		vector<vector<int>>ynein;
 	public:
 		 parallelpush();
 	 	 void topsort(){};
+	 	 bool checkR(int s,int t);
 	 	 virtual bool cutcake(int index){};
 	     virtual pair<int,int> prepush(int s,int t,int bw);
 	 	 virtual void init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo);
