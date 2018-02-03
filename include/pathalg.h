@@ -14,7 +14,7 @@
 #define BS 5
 #define WD 5
 #ifndef LY 
-	#define LY 1000
+	#define LY 1
 #endif
 #define inf INT_MAX/2
 using namespace std;
@@ -236,7 +236,7 @@ class dijkstor:public algbase{
 			}
 			for(int i=0;i<edges.size()*LY;i++)
 				esign[i]=1;
-        	for(int k=0;k<LY;k++)
+        	/*for(int k=0;k<LY;k++)
         		{
         		int startn=k*nodenum;
         		for(int i=0;i<W;i++)
@@ -250,10 +250,10 @@ class dijkstor:public algbase{
         		}
         	int mc=0;
         	//cout<<"all -1 is "<<endl;
-        	for(int k=0;k<LY;k++)
+        	/*for(int k=0;k<LY;k++)
         		{
         			for(int i=0;i<edges.size();i++)
-        				if(edges[i].s==s)//&&(edges[i].t==5||edges[i].t==19))
+        				if(edges[i].s!=t)//&&(edges[i].t==5||edges[i].t==19))
         					{
         					value[k*nodenum+W*edges[i].t+1]=1;
         					//cout<<k*nodenum+W*edges[i].t+1<<endl;
@@ -263,7 +263,26 @@ class dijkstor:public algbase{
         					//cout<<k*pesize+i<<endl;
         					mc++;
         					}
-        		}
+        		}*/
+        	
+        	for(int i=0;i<nodenum*LY;i++)
+        	{
+        		int bi=i%nodenum;
+        		if(bi/W!=t&&bi%W==0)
+        			value[i]=1;
+        	}
+        	
+        	/*for(int k=0;k<LY;k++)
+				{
+					for(int i=0;i<edges.size();i++)
+						if(edges[i].s!=t)
+							{
+							value[k*nodenum+W*edges[i].t+1]=1;
+							esign[k*pesize+i]*=-1;
+							int node=k*nodenum+W*edges[i].t+1;
+							mc++;
+							}
+				}*/
         	//cout<<"mc is : "<<mc<<endl;
         	//cout<<"gggg"<<endl;
         	int mark=1;
@@ -279,7 +298,7 @@ class dijkstor:public algbase{
         		for(int i=0;i<nodenum*LY;i++)
 					{
         				int bi=i%nodenum;
-        				if(value[i]>0&&bi/W!=s&&bi/W!=t)
+        				if(value[i]>0&&bi/W!=t)
 						{
         					int flag=0;
 							int minheight=INT_MAX;
@@ -290,10 +309,12 @@ class dijkstor:public algbase{
 								bool b1=(esign[eid]>0&&neie[i][j]>0)?true:false;
 								bool b2=(esign[eid]<0&&neie[i][j]<0&&i%W==abs(esign[eid]))?true:false;
 								int to=nein[i][j];
-								if(value[i]>0&&btest)
+								if(value[i]>0&&(b1||b2))
 								{
-									//cout<<"in"<<endl;
-									if(to<=s*W||to>=s*W+W)
+									if(height[i]>W+1&&i%W==0){
+										value[i]=0;
+										continue;
+									}
 									{
 										if(height[i]==height[to]+1)
 										{
@@ -309,6 +330,7 @@ class dijkstor:public algbase{
 												cout<<"lefpush "<<i/W<<"["<<i%W<<"]"<<"("<<height[i]<<")"<<"to "<<to/W<<"["<<to%W<<"]"<<"("<<height[to]<<")"<<endl;*/
 											value[i]--;
 											value[to]++;
+											if(to==37)cout<<eid<<endl;
 											if((to%nodenum)/W==t){
 												flow++;
 											}
@@ -378,30 +400,27 @@ class dijkstor:public algbase{
         		int tnode=t*W+i;
         		while(value[tnode]>0)
         		{
-        			
         			int node=tnode;
         			int off=i;
         			max=0;
-        			while(node!=s*W)
-        			//for(int j=0;j<3;j++)
+        			while(off>0)
         			{
         				max++;
-        				if(max>WD)
+        				if(max>WD+1)
         					{
         						cout<<"loop occurs,erro happened!"<<endl;
         						break;
         					}
         				//cout<<node/W<<" ";
-        				//cout<<"bie chongfeng "<<node<<" "<<endl;
         				for(int k=0;k<nein[node].size();k++)
         					{
         					int eid=abs(neie[node][k])-1;
-        					//cout<<neie[node][k]<<" "<<esign[eid]<<endl;
         					if(neie[node][k]<0&&(-esign[eid]==off))
         						{
         						esign[eid]*=-1;
-        						off--;
+        						off=off-1;
         						node=edges[eid].s*W+off;
+        						//cout<<off<<endl;
         						break;
         						}
         					}
