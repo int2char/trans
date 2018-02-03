@@ -174,7 +174,6 @@ class dijkstor:public algbase{
         virtual pair<int,int> prepush(int s,int t,int bw)
         {
         	time_t start,end;
-        	start=clock();
         	cout<<endl;
         	//cout<<"**********************************"<<endl;
         	cout<<"serial: "<<LY<<" "<<pnodesize<<" "<<s<<" "<<t<<endl;
@@ -216,6 +215,7 @@ class dijkstor:public algbase{
 				if(rr<20&&source[i]==0)
 					ends[i]=1;
 			}
+        	start=clock();
         	int mark=1;
         	int cc=0;
         	int flow=0;

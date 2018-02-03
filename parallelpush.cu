@@ -53,25 +53,8 @@ void parallelpush::init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo
 		}
 	source=new int[pnodesize];
 	ends=new int[pnodesize];
-	srand(0);
-	for(int i=0;i<pnodesize;i++)
-	{
-		int rr=rand()%100;
-		if(rr<20)
-			{
-				source[i]=1;
-				for(int k=0;k<LY;k++)
-					{
-					v[k*nodenum+i*W]=1;
-					}
-			}
-	}
-	for(int i=0;i<pnodesize;i++)
-	{
-		int rr=rand()%100;
-		if(rr<20&&source[i]==0)
-			ends[i]=1;
-	}
+	//srand(0);
+
 	cudaMalloc((void**)&dev_h,LY*W*pnodesize*sizeof(int));
 	cudaMalloc((void**)&dev_mark,sizeof(int));
 	cudaMalloc((void**)&dev_v,LY*W*pnodesize*sizeof(int));
@@ -88,7 +71,6 @@ void parallelpush::init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo
 	cudaMemcpy(dev_te,te,edges.size()*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_ends,ends,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_source,source,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
-	cudaMemcpy(dev_ends,ends,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 };
 __global__ void push(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*dev_neie,int*dev_nein,int N,int max,int W,int s,int t,int*mark)
 {
@@ -164,7 +146,7 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 	int value=dev_v[i];
 	int node=bi/W;
 	if(i>=N*LY||value==0||dev_ends[node]==1)return;
-	if(node/W==0&&dev_source[node]==1&&dev_h[i]>W+1){dev_v[i]=0;return;}
+	if(bi/W==0&&dev_source[node]==1&&dev_h[i]>W+1){dev_v[i]=0;return;}
 	int ly=i/N;
 	int off=i%W;
 	int h=dev_h[i];
@@ -383,7 +365,6 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 			h[i]=0;
 			v[i]=0;
 		}
-	
 	/*for(int k=0;k<LY;k++)
 		{
 		for(int i=0;i<edges.size();i++)
@@ -399,16 +380,33 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 		for(int i=s*W;i<s*W+W;i++)
 			h[i+start]=WD;
 		}*/
-	for(int i=0;i<nodenum*LY;i++)
+	int cc=0;
+	for(int i=0;i<pnodesize;i++)
 	{
-		int bi=i%nodenum;
-		if(bi/W!=t&&bi%W==0)
-			v[i]=1;
+		int rr=rand()%100;
+		if(rr<20)
+			{
+				source[i]=1;
+				for(int k=0;k<LY;k++)
+					{
+					v[k*nodenum+i*W]=1;
+					}
+				cc++;
+			}
+	}
+	cout<<"cc is "<<cc<<endl;
+	for(int i=0;i<pnodesize;i++)
+	{
+		int rr=rand()%100;
+		if(rr<20&&source[i]==0)
+			ends[i]=1;
 	}
 	cudaMemcpy(dev_h,h,LY*W*pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_v,v,LY*W*pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_esign,esign,LY*edges.size()*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_emark,emark,LY*edges.size()*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_ends,ends,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_source,source,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 	*mark=1;
 	int time=0;
 	cout<<"max is "<<max<<endl;
@@ -417,7 +415,7 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 	while(*mark!=0)
 	//for(int i=0;i<2;i++)
 	{
-		if(time%100==0)
+		if(time%20==0)
 			{*mark=0;
 			cudaMemcpy(dev_mark,mark,sizeof(int),cudaMemcpyHostToDevice);}
 		push2<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_st,dev_te,dev_neie,W*pnodesize,W,edges.size(),s,t,dev_mark,max,dev_source,dev_ends);
@@ -430,7 +428,7 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 				cout<<"gota... "<<i<<"s:"<<st[i]<<" "<<te[i]<<" "<<emark[i]<<endl;*/
 		//relable<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,W*pnodesize,dev_mark,dev_nein,dev_neie,dev_esign,max,W,s,t);
 		//aggregate2<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,W,edges.size(),W*pnodesize,dev_mark);
-		if(time%100==0)
+		if(time%20==0)
 			cudaMemcpy(mark,dev_mark,sizeof(int),cudaMemcpyDeviceToHost);
 		/*cudaMemcpy(v,dev_v,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
 		cudaMemcpy(h,dev_h,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
@@ -468,11 +466,11 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 	cudaMemcpy(v,dev_v,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
 	cudaMemcpy(h,dev_h,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
 	int flow=0;
-	for(int i=0;i<LY*W*pnodesize;i++)
+	for(int i=0;i<W*pnodesize;i++)
 		if(v[i]!=0)
 			{
 				int bi=i%(W*pnodesize);
-				if(bi/W==t)flow+=v[i];
+				if(ends[bi/W]==1)flow+=v[i];
 				//cout<<i/(W*pnodesize)<<" "<<bi<<" "<<bi/W<<" "<<bi%W<<" "<<h[i]<<" "<<v[i]<<endl;
 			}
 	cudaMemcpy(esign,dev_esign,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
