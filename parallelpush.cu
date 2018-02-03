@@ -51,7 +51,27 @@ void parallelpush::init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo
 			st[i]=edges[i].s*W;
 			te[i]=edges[i].t*W;
 		}
-
+	source=new int[pnodesize];
+	ends=new int[pnodesize];
+	srand(0);
+	for(int i=0;i<pnodesize;i++)
+	{
+		int rr=rand()%100;
+		if(rr<20)
+			{
+				source[i]=1;
+				for(int k=0;k<LY;k++)
+					{
+					v[k*nodenum+i*W]=1;
+					}
+			}
+	}
+	for(int i=0;i<pnodesize;i++)
+	{
+		int rr=rand()%100;
+		if(rr<20&&source[i]==0)
+			ends[i]=1;
+	}
 	cudaMalloc((void**)&dev_h,LY*W*pnodesize*sizeof(int));
 	cudaMalloc((void**)&dev_mark,sizeof(int));
 	cudaMalloc((void**)&dev_v,LY*W*pnodesize*sizeof(int));
@@ -59,11 +79,16 @@ void parallelpush::init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo
 	cudaMalloc((void**)&dev_esign,LY*edges.size()*sizeof(int));
 	cudaMalloc((void**)&dev_emark,LY*edges.size()*sizeof(int));
 	cudaMalloc((void**)&dev_st,edges.size()*sizeof(int));
+	cudaMalloc((void**)&dev_ends,pnodesize*sizeof(int));
+	cudaMalloc((void**)&dev_source,pnodesize*sizeof(int));
 	cudaMalloc((void**)&dev_te,edges.size()*sizeof(int));
 	cudaMemcpy(dev_mark,mark,sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_neie,neie,max*pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_st,st,edges.size()*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_te,te,edges.size()*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_ends,ends,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_source,source,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_ends,ends,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 };
 __global__ void push(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*dev_neie,int*dev_nein,int N,int max,int W,int s,int t,int*mark)
 {
@@ -132,14 +157,14 @@ __global__ void push1(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*dev_
 	}
 	if(value>0&&minheight<INT_MAX){dev_h[i]=minheight+1;*mark=1;}
 };
-__global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,int*te,int*neie,int N,int W,int E,int s,int t,int*mark,int max)
+__global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,int*te,int*neie,int N,int W,int E,int s,int t,int*mark,int max,int*dev_source,int*dev_ends)
 {
 	int i = threadIdx.x + blockIdx.x*blockDim.x;
 	int bi=i%N;
 	int value=dev_v[i];
 	int node=bi/W;
-	if(i>=N*LY||value==0||node==t)return;
-	if(dev_h[i]>W+1){dev_v[i]=0;return;}
+	if(i>=N*LY||value==0||dev_ends[node]==1)return;
+	if(node/W==0&&dev_source[node]==1&&dev_h[i]>W+1){dev_v[i]=0;return;}
 	int ly=i/N;
 	int off=i%W;
 	int h=dev_h[i];
@@ -358,6 +383,7 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 			h[i]=0;
 			v[i]=0;
 		}
+	
 	/*for(int k=0;k<LY;k++)
 		{
 		for(int i=0;i<edges.size();i++)
@@ -394,7 +420,7 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 		if(time%100==0)
 			{*mark=0;
 			cudaMemcpy(dev_mark,mark,sizeof(int),cudaMemcpyHostToDevice);}
-		push2<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_st,dev_te,dev_neie,W*pnodesize,W,edges.size(),s,t,dev_mark,max);
+		push2<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_st,dev_te,dev_neie,W*pnodesize,W,edges.size(),s,t,dev_mark,max,dev_source,dev_ends);
 		//push1<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_neie,dev_nein,W*pnodesize,max,W,s,t,dev_mark);
 		//aggregate2<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,W,edges.size());
 		aggregate3<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,dev_st,dev_te,dev_h,W,edges.size(),W*pnodesize);

@@ -35,6 +35,7 @@ class Graph
         {
         	pair<int,int>a=router1.prepush(s,t,0);
         	pair<int,int>b=router2.prepush(s,t,0);
+
         	return make_pair(a.first,a.second);
         }
         virtual ~Graph(){};
