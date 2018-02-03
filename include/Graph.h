@@ -34,10 +34,8 @@ class Graph
         pair<int,int>prepush(int s,int t,int n,ofstream& out)
         {
         	pair<int,int>a=router1.prepush(s,t,0);
-        	//pair<int,int>b=router2.prepush(s,t,0);
-        	//if(a.first!=b.first)
-        		//out<<"erro! "<<LY<<" "<<n<<" "<<s<<" "<<t<<endl;
-        	return make_pair(a.first,a.second);\
+        	pair<int,int>b=router2.prepush(s,t,0);
+        	return make_pair(a.first,a.second);
         }
         virtual ~Graph(){};
     protected:
@@ -100,7 +98,7 @@ class Graph
             	for(int j=0;j<near[i].size();j++)
             		redges.push_back(edge(i,near[i][j],1));
             router1.init(redges,erelate,ginfo(maxedge+1,edges.size(),n,maxnode+1,etn2n));
-           // router2.init(redges,erelate,ginfo(maxedge+1,edges.size(),n,maxnode+1,etn2n));
+            router2.init(redges,erelate,ginfo(maxedge+1,edges.size(),n,maxnode+1,etn2n));
         };
 };
 class ERGraph:public Graph{
@@ -115,12 +113,12 @@ private:
     virtual void GenGraph(){
         int count = 0;
         set<pair<int, int>>flag;
-        double threhod = 6*n/((n-1));
+        double threhod = 10*n/((n-1));
         for (int i = 0; i <n; i++)
             for (int j =i+1; j<n;j++)
                 if (i != j)
                 {
-                    double ran =(double) (rand() % (n));
+                    double ran=(double)(rand()%n);
                     if (ran<threhod)
                     {
                         if (flag.find(make_pair(i, j))==flag.end())

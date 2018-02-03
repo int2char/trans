@@ -152,7 +152,10 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 			seid=abs(ebj)-1;
 			eid=ly*E+seid;
 			nbj=-1;
-			if((ebj^dev_esign[eid])>0)
+			bool btest=(ebj^dev_esign[eid])>0;
+			bool b1=ebj>0&&dev_esign[eid]>0;
+			bool b2=ebj<0&&dev_esign[eid]<0&&abs(dev_esign[eid])==off;
+			if(b1||b2)
 			{
 				if(ebj>0&&off<W-1)
 					nbj=te[seid]+off+1;
@@ -204,7 +207,8 @@ __global__ void aggregate3(int* dev_esign,int* dev_v,int* dev_emark,int* dev_st,
 				{
 					atomicSub(&dev_v[s+k],1);
 					atomicAdd(&dev_v[t+k],1);
-					dev_esign[i]*=-1;
+					dev_esign[i]=(dev_esign[i]>0)?-(k+t)%W:1;
+					//dev_esign[i]*=-1;
 					break;
 				}
 			}
@@ -401,10 +405,11 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 		//aggregate2<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,W,edges.size(),W*pnodesize,dev_mark);
 		if(time%100==0)
 			cudaMemcpy(mark,dev_mark,sizeof(int),cudaMemcpyDeviceToHost);
-		/*(cudaMemcpy(v,dev_v,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
+		/*cudaMemcpy(v,dev_v,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
 		cudaMemcpy(h,dev_h,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
 		cudaMemcpy(esign,dev_esign,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
 		int flow=0;
+		cout<<"************* "<<time<<endl;
 		for(int i=0;i<LY*W*pnodesize;i++)
 			if(v[i]!=0)
 				{

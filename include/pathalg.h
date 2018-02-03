@@ -14,7 +14,7 @@
 #define BS 5
 #define WD 5
 #ifndef LY 
-	#define LY 1
+	#define LY 100
 #endif
 #define inf INT_MAX/2
 using namespace std;
