@@ -290,12 +290,7 @@ class dijkstor:public algbase{
 								bool b1=(esign[eid]>0&&neie[i][j]>0)?true:false;
 								bool b2=(esign[eid]<0&&neie[i][j]<0&&i%W==abs(esign[eid]))?true:false;
 								int to=nein[i][j];
-								/*if(i==1)
-								{
-									
-									cout<<height[to]<<" "<<esign[eid]<<"["<<eid<<"]"<<" "<<neie[i][j]<<endl;
-								}*/
-								if(value[i]>0&&(b1||b2))
+								if(value[i]>0&&btest)
 								{
 									//cout<<"in"<<endl;
 									if(to<=s*W||to>=s*W+W)

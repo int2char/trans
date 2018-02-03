@@ -153,9 +153,9 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 			eid=ly*E+seid;
 			nbj=-1;
 			bool btest=(ebj^dev_esign[eid])>0;
-			bool b1=ebj>0&&dev_esign[eid]>0;
-			bool b2=ebj<0&&dev_esign[eid]<0&&abs(dev_esign[eid])==off;
-			if(b1||b2)
+			//bool b1=ebj>0&&dev_esign[eid]>0;
+			//bool b2=ebj<0&&dev_esign[eid]<0&&abs(dev_esign[eid])==off;
+			if(btest)
 			{
 				if(ebj>0&&off<W-1)
 					nbj=te[seid]+off+1;
@@ -207,8 +207,8 @@ __global__ void aggregate3(int* dev_esign,int* dev_v,int* dev_emark,int* dev_st,
 				{
 					atomicSub(&dev_v[s+k],1);
 					atomicAdd(&dev_v[t+k],1);
-					dev_esign[i]=(dev_esign[i]>0)?-(k+t)%W:1;
-					//dev_esign[i]*=-1;
+					//dev_esign[i]=(dev_esign[i]>0)?-(k+t)%W:1;
+					dev_esign[i]*=-1;
 					break;
 				}
 			}
@@ -343,12 +343,6 @@ __global__ void relable(int*dev_h,int*dev_v,int N,int*mark,int*dev_nein,int*dev_
 	if(mini!=INT_MAX)
 		dev_h[i]=mini+1,*mark=1;
 };
-
-
-
-
-
-
 
 pair<int,int> parallelpush::prepush(int s,int t,int bw)
 {
