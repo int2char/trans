@@ -14,7 +14,7 @@
 #define BS 5
 #define WD 5
 #ifndef LY 
-	#define LY 1
+	#define LY 1000
 #endif
 #define inf INT_MAX/2
 using namespace std;
@@ -273,7 +273,6 @@ class dijkstor:public algbase{
         	int fff=INT_MAX;
         	int iasd=50;
         	while(mark==1)
-        	//for(int l=0;l<1300;l++)
         	{
         		mark=0;
         		time++;
@@ -315,8 +314,7 @@ class dijkstor:public algbase{
 												cout<<"lefpush "<<i/W<<"["<<i%W<<"]"<<"("<<height[i]<<")"<<"to "<<to/W<<"["<<to%W<<"]"<<"("<<height[to]<<")"<<endl;*/
 											value[i]--;
 											value[to]++;
-											if(to/W==t){
-												//cout<<"got it "<<to<<" "<<i/W<<" "<<time<<" "<<endl;
+											if((to%nodenum)/W==t){
 												flow++;
 											}
 											int off=to%W;
