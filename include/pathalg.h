@@ -164,7 +164,7 @@ class dijkstor:public algbase{
 			topsort();
         }
         virtual vector<int> routalg(int s,int t,int bw){
-        		cout<<"begin to push "<<ordernode.size()<<endl;
+        		/*cout<<"begin to push "<<ordernode.size()<<endl;
         		int tnode=-1;
 				vector<int>visited(nodenum*LY,0);
 				vector<int>pre(nodenum*LY,-1);
