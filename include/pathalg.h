@@ -342,6 +342,7 @@ class dijkstor:public algbase{
     				}
         		cc++;
         	}
+        	end=clock();
         	//cout<<"this is "<<endl;
         	for(int i=0;i<nodenum;i++)
         		if(value[i]!=0)
@@ -368,8 +369,7 @@ class dijkstor:public algbase{
         			esign[i]=0;
         	//cout<<"check r"<<endl;
         	checkhop(s,t);
-        	end=clock();
-        	//cout<<"CPU time is: "<<end-start<<endl;
+        	cout<<"CPU time is: "<<end-start<<endl;
         	//cout<<"count is: "<<count<<endl;
         	//cout<<"die is: "<<cc<<endl;
         	//return make_pair(flow,end-start);
