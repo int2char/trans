@@ -348,8 +348,6 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 {
 	cout<<"**********************************"<<endl;
 	cout<<"parral: "<<LY<<" "<<pnodesize<<" "<<s<<" "<<t<<endl;
-	time_t start,end;
-	start=clock();
 	for(int i=0;i<LY*edges.size();i++)
 		emark[i]=0;
 	for(int k=0;k<LY;k++)
@@ -382,6 +380,8 @@ pair<int,int> parallelpush::prepush(int s,int t,int bw)
 	*mark=1;
 	int time=0;
 	cout<<"max is "<<max<<endl;
+	time_t start,end;
+	start=clock();
 	while(*mark!=0)
 	{
 		if(time%100==0)
