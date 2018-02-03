@@ -103,7 +103,7 @@ void parallelor::topsort()
 	vector<pair<int,int>>tmp;
 	for(int i=0;i<order.size();i++)
 		tmp.push_back(make_pair(i,order[i]));
-	sort(tmp.begin(),tmp.end(),pairless());
+	//sort(tmp.begin(),tmp.end(),pairless());
 	for(int i=0;i<order.size();i++)
 		ordernode.push_back(tmp[i].first);
 };

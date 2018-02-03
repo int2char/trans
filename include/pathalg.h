@@ -14,16 +14,16 @@
 #define BS 5
 #define WD 5
 #ifndef LY 
-	#define LY 100
+	#define LY 1
 #endif
 #define inf INT_MAX/2
 using namespace std;
-class pairless {
+/*class pairless {
     public:
         bool operator()(pair<int,int>&a,pair<int,int>&b){
             return a.second<b.second;
         }
-};
+};*/
 class algbase {
     protected:
         vector<int> getrout(int &s, int &t, vector<edge> &edges, vector<int> &pre) {
