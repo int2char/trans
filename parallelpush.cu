@@ -159,7 +159,7 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 			eid=ly*E+seid;
 			nbj=-1;
 			bool b1=ebj>0&&dev_esign[eid]>0;
-			bool b2=ebj<0&&dev_esign[eid]<0&&abs(dev_esign[eid])==off;
+			bool b2=ebj<0&&dev_esign[eid]<0&&(abs(dev_esign[eid])==off);
 			if(b1||b2)
 			{
 				if(ebj>0&&off<W-1)
@@ -217,7 +217,6 @@ __global__ void aggregate3(int* dev_esign,int* dev_v,int* dev_emark,int* dev_st,
 				}
 			}
 	}
-
 	dev_emark[i]=0;
 };
 __global__ void pushrelable(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*dev_neie,int*dev_nein,int N,int max,int W,int s,int t,int*mark)
@@ -423,10 +422,8 @@ pair<int,int> parallelpush::prepush(int slen,int tlen,int bw)
 			{*mark=0;
 			cudaMemcpy(dev_mark,mark,sizeof(int),cudaMemcpyHostToDevice);}
 		push2<<<LY*nodenum/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_st,dev_te,dev_neie,nodenum,W,edges.size(),dev_mark,max,dev_source,dev_ends);
-		//push1<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_neie,dev_nein,W*pnodesize,max,W,s,t,dev_mark);
-		//aggregate2<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,W,edges.size());
-		//cudaMemcpy(v,dev_v,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
-		//cudaMemcpy(h,dev_h,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
+		cudaMemcpy(v,dev_v,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
+		cudaMemcpy(h,dev_h,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
 		aggregate3<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,dev_st,dev_te,dev_h,W,edges.size(),W*pnodesize);
 		/*cudaMemcpy(emark,dev_emark,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
 		for(int i=0;i<LY*edges.size();i++)
@@ -444,11 +441,11 @@ pair<int,int> parallelpush::prepush(int slen,int tlen,int bw)
 		/*for(int i=0;i<LY*W*pnodesize;i++)
 			if(v[i]!=0)
 				{
-					int bi=i%(W*pnodesize);
-					//if(bi/W==t)flow+=v[i];
-					if(time<733)
-						cout<<i<<"\t"<<h[i]<<"\t"<<v[i]<<endl;
-					if(fl2>0&&i==18&&h[i]>W+1)
+					int bi=i%nodenum;
+					int level=i/nodenum;
+					int off=bi%W;
+					int node=bi/W;
+					if(fl2>0&&dev_h[node]>W+1&&source[node]==1)
 					{
 						cout<<"time is "<<time<<endl;
 						cout<<"what happened"<<endl;
