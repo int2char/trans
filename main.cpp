@@ -13,7 +13,7 @@ int main()
     int count=0;
     ERGraph graph(1000,1,d2,d1);
     //12,1,s=42//
-    graph.prepush(20,20,400,outfile);
+    graph.prepush(50,50,400,outfile);
    /* for(int n=100;n<5000;n*=2)
     	{	ERGraph graph(n,1,d2,d1);
     	   	double flow=0;

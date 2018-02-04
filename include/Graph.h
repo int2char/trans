@@ -33,7 +33,7 @@ class Graph
         algbase&router2;
         pair<int,int>prepush(int s,int t,int n,ofstream& out)
         {
-        	//pair<int,int>a=router1.prepush(s,t,0);
+        	pair<int,int>a=router1.prepush(s,t,0);
         	pair<int,int>b=router2.prepush(s,t,0);
 
         	return make_pair(b.first,b.second);
@@ -98,7 +98,7 @@ class Graph
             for(int i=0;i<near.size();i++)
             	for(int j=0;j<near[i].size();j++)
             		redges.push_back(edge(i,near[i][j],1));
-            //router1.init(redges,erelate,ginfo(maxedge+1,edges.size(),n,maxnode+1,etn2n));
+            router1.init(redges,erelate,ginfo(maxedge+1,edges.size(),n,maxnode+1,etn2n));
             router2.init(redges,erelate,ginfo(maxedge+1,edges.size(),n,maxnode+1,etn2n));
         };
 };

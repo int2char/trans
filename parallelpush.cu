@@ -7,12 +7,9 @@ parallelpush::parallelpush()
 {
 };
 void parallelpush::init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo ginf){
-	//cout<<"in cuda init"<<endl;
 	nodenum=ginf.enodesize;
 	pnodesize=ginf.pnodesize;
 	edges=extenedges;
-	cout<<"nodenum is "<<nodenum<<endl;
-	cout<<"out cuda init"<<endl;
 	W=WD+1;
 	h=new int[W*pnodesize*LY];
 	v=new int[W*pnodesize*LY];
@@ -29,7 +26,6 @@ void parallelpush::init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo
 	for(int i=0;i<rawneie.size();i++)
 		if(rawneie[i].size()>max)max=rawneie[i].size();
 	max++;
-	//cout<<"max is: "<<max<<endl;
 	neie=new int[pnodesize*max];
 	for(int i=0;i<pnodesize;i++)
 		{
@@ -45,7 +41,6 @@ void parallelpush::init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo
 	esign=new int[LY*edges.size()];
 	st=new int[edges.size()];
 	te=new int[edges.size()];
-
 	for(int i=0;i<edges.size();i++)
 		{
 			st[i]=edges[i].s*W;
@@ -77,7 +72,6 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 	int value=dev_v[i];
 	int node=bi/W;
 	if(i>=N*LY||value==0||dev_ends[node]==1)return;
-	//if(dev_ends[node]==1){dev_v[i]=0;return;}
 	if(bi%W==0&&dev_h[i]>W+1&&dev_source[node]==1){dev_v[i]=0;return;}
 	int ly=i/N;
 	int off=i%W;
@@ -85,6 +79,7 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 	int b=node*max;
 	int minheight=INT_MAX;
 	int ebj,nbj,hnbj,eid,seid;
+	int flag=0;
 	for(int j=0;j<max;j++)
 	{
 		ebj=neie[b+j];
@@ -96,7 +91,7 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 			bool b2=ebj<0&&dev_esign[eid]<0&&(abs(dev_esign[eid])==off);
 			if(b1||b2)
 			{
-				if(ebj>0&&off<W)
+				if(ebj>0&&off<W-1)
 					nbj=te[seid]+off+1;
 				if(ebj<0&&off>0)
 					nbj=st[seid]+off-1;
@@ -138,7 +133,7 @@ __global__ void aggregate3(int* dev_esign,int* dev_v,int* dev_emark,int* dev_st,
 		}
 		s+=bottom;
 		t+=bottom;
-		for(int k=0;k<W;k++)
+		for(int k=0;k<W-1;k++)
 			{
 				int h1=dev_h[s+k];
 				int h2=dev_h[t+k];
@@ -150,6 +145,7 @@ __global__ void aggregate3(int* dev_esign,int* dev_v,int* dev_emark,int* dev_st,
 					break;
 				}
 			}
+			
 	}
 	dev_emark[i]=0;
 };
@@ -188,14 +184,11 @@ pair<int,int> parallelpush::prepush(int slen,int tlen,int bw)
 				}
 			}
 	}
-	//cout<<" ccc is "<<ccc<<endl;
 	for(int i=0;i<pnodesize;i++)
 	{
 		while(tlen>0)
 			{
-			//cout<<"???"<<endl;
 			int j=rand()%pnodesize;
-			//cout<<j<<endl;
 			if(source[j]==0&&ends[j]==0)
 				{
 					ends[j]=1;
@@ -203,22 +196,12 @@ pair<int,int> parallelpush::prepush(int slen,int tlen,int bw)
 				}
 			}
 	}
-	cout<<"out it "<<endl;
 	for(int i=0;i<LY*edges.size();i++)
 	{
 		int ran=rand()%100;
-		if(ran<30)
+		if(ran<50)
 			esign[i]=0;
 	}
-	/*for(int i=0;i<pnodesize;i++)
-		if(source[i]>0)
-			cout<<i<<" ";
-	cout<<endl;
-	cout<<"termination:"<<endl;
-	for(int i=0;i<pnodesize;i++)
-		if(ends[i]>0)
-			cout<<i<<" ";
-	cout<<endl;*/
 	cudaMemcpy(dev_h,h,LY*W*pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_v,v,LY*W*pnodesize*sizeof(int),cudaMemcpyHostToDevice);
 	cudaMemcpy(dev_esign,esign,LY*edges.size()*sizeof(int),cudaMemcpyHostToDevice);
@@ -234,58 +217,22 @@ pair<int,int> parallelpush::prepush(int slen,int tlen,int bw)
 	while(*mark!=0)
 		{
 			if(time%20==0)
-				{*mark=0;
-				cudaMemcpy(dev_mark,mark,sizeof(int),cudaMemcpyHostToDevice);}
+				{	*mark=0;
+					cudaMemcpy(dev_mark,mark,sizeof(int),cudaMemcpyHostToDevice);
+				}
+			
 			push2<<<LY*nodenum/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_st,dev_te,dev_neie,nodenum,W,edges.size(),dev_mark,max,dev_source,dev_ends);
 			cudaMemcpy(emark,dev_emark,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
-			//cudaMemcpy(v,dev_v,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
-			//cudaMemcpy(h,dev_h,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
 			aggregate3<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,dev_st,dev_te,dev_h,W,edges.size(),W*pnodesize);
-			/*cudaMemcpy(emark,dev_emark,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
-			for(int i=0;i<LY*edges.size();i++)
-				if(emark[i]>0)
-					cout<<"gota... "<<i<<"s:"<<st[i]<<" "<<te[i]<<" "<<emark[i]<<endl;*/
-			//relable<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,W*pnodesize,dev_mark,dev_nein,dev_neie,dev_esign,max,W,s,t);
-			//aggregate2<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,W,edges.size(),W*pnodesize,dev_mark);
+			
 			if(time%20==0)
 				cudaMemcpy(mark,dev_mark,sizeof(int),cudaMemcpyDeviceToHost);
-			//cout<<"loop occurs"<<endl;
-			//cudaMemcpy(v,dev_v,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
-			//cudaMemcpy(h,dev_h,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
-			//cudaMemcpy(esign,dev_esign,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
-				/*if(time<742)*/
-			//int s=780*6+4;
-			//cout<<"************* "<<time<<endl;
-			
-			/*for(int i=0;i<LY*W*pnodesize;i++)
-				if(fl2>0&&v[i]>0&&ends[i/W]==0&&i/W==465)
-					{
-						cout<<i<<" "<<i/W<<" "<<i%W<<" "<<" "<<h[i]<<" "<<v[i]<<endl;
-						//cout<<1019/W<<" "<<1019%W<<endl;
-						int node=i/W;
-						/*for(int j=0;j<max;j++)
-							if(neie[node*max+j]<INT_MAX)
-							{
-								int eid=abs(neie[node*max+j])-1;
-								//cout<<edges[eid].s<<" "<<edges[eid].t<<endl;
-								cout<<eid<<" "<<" "<<neie[node*max+j]<<" "<<emark[eid]<<" "<<esign[eid]<<endl;
-							}
-						//fl2=0;
-						/*if(i==319)
-						{
-							for(int j=0;j<max;j++)
-								if(nein[i*max+j]<INT_MAX)
-									cout<<neie[i*max+j]<<" "<<esign[abs(neie[i*max+j])-1]<<" "<<h[nein[i*max+j]]<<endl;
-						}*/
-	//}				
-				//	}
-
 			time++;
-	}	
+	    }	
 	int flow=0;
 	cudaMemcpy(v,dev_v,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
 	end=clock();
-	for(int i=0;i<W*pnodesize;i++)
+	for(int i=0;i<W*pnodesize*LY;i++)
 			if(v[i]!=0)
 				{
 					int bi=i%(W*pnodesize);

@@ -186,8 +186,8 @@ class dijkstor:public algbase{
 				esign[i]=1;
         	vector<int>ifhas(nodenum,0);
         	
-        	int ccc=0;
         	srand(1);
+        	int ccc=0;
         	for(int i=0;i<pnodesize;i++)
         	{
         		while(slen>0)
@@ -204,23 +204,26 @@ class dijkstor:public algbase{
         				}
         			}
         	}
-        	///cout<<" ccc is "<<ccc<<endl;
+        	//cout<<" ccc is "<<ccc<<endl;
         	for(int i=0;i<pnodesize;i++)
-			{
+        	{
         		while(tlen>0)
-					{
-					int j=rand()%pnodesize;
-					if(source[j]==0&&ends[j]==0)
-						{
-							ends[j]=1;
-							tlen--;
-						}
-					}
-			}
+        			{
+        			//cout<<"???"<<endl;
+        			int j=rand()%pnodesize;
+        			//cout<<j<<endl;
+        			if(source[j]==0&&ends[j]==0)
+        				{
+        					ends[j]=1;
+        					tlen--;
+        				}
+        			}
+        	}
+        	//cout<<"out it "<<endl;
         	for(int i=0;i<LY*edges.size();i++)
         	{
         		int ran=rand()%100;
-        		if(ran<30)
+        		if(ran<90)
         			esign[i]=0;
         	}
         	start=clock();
@@ -250,7 +253,7 @@ class dijkstor:public algbase{
 								bool b1=(esign[eid]>0&&neie[i][j]>0)?true:false;
 								bool b2=(esign[eid]<0&&neie[i][j]<0&&i%W==abs(esign[eid]))?true:false;
 								int to=nein[i][j];
-								if(value[i]>0&&(b1||b2))
+								if(value[i]>0&&(b1||b2)&&esign[eid]!=0)
 								{
 									if(height[i]>W+1&&i%W==0&&source[(i%nodenum)/W]==1){
 										value[i]=0;
@@ -324,9 +327,6 @@ class dijkstor:public algbase{
 						for(int i=1;i<W;i++)
 						{
 							int tnode=nodeoff+j*W+i;
-							//cout<<"where"<<endl;
-							//cout<<(tnode%nodenum)/W<<" "<<tnode%W<<endl;
-							//cout<<tnode<<endl;
 							while(value[tnode]>0)
 							{
 								int node=tnode;
