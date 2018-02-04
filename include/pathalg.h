@@ -14,16 +14,10 @@
 #define BS 5
 #define WD 5
 #ifndef LY 
-	#define LY 1000
+	#define LY 2
 #endif
 #define inf INT_MAX/2
 using namespace std;
-/*class pairless {
-    public:
-        bool operator()(pair<int,int>&a,pair<int,int>&b){
-            return a.second<b.second;
-        }
-};*/
 class algbase {
     protected:
         vector<int> getrout(int &s, int &t, vector<edge> &edges, vector<int> &pre) {
@@ -63,6 +57,8 @@ class dijkstor:public algbase{
 		vector<int>value;
 		vector<int>esign;
 		vector<int>ordernode;
+		vector<int>source;
+		vector<int>ends;
 		int W;
         dijkstor(){};
         void topsort()
@@ -137,7 +133,11 @@ class dijkstor:public algbase{
 			height=theight;
 			value=tvalue;
 			esign=tesign;
-			cout<<"pnodesize is :"<<pnodesize<<endl;
+			vector<int>tsource(pnodesize,0);
+			vector<int>tends(pnodesize,0);
+			source=tsource;
+			ends=tends;
+			//cout<<"pnodesize is :"<<pnodesize<<endl;
 			for(int k=0;k<LY;k++)
 			{
 				int startn=k*nodenum;
@@ -159,7 +159,7 @@ class dijkstor:public algbase{
 						}
 					}
 			}
-			topsort();
+			//topsort();
         }
         virtual vector<int> routalg(int s,int t,int bw){
         	
@@ -171,12 +171,12 @@ class dijkstor:public algbase{
         	return false;
         }
         
-        virtual pair<int,int> prepush(int s,int t,int bw)
+        virtual pair<int,int> prepush(int slen,int tlen,int bw)
         {
         	time_t start,end;
         	cout<<endl;
         	//cout<<"**********************************"<<endl;
-        	cout<<"serial: "<<LY<<" "<<pnodesize<<" "<<s<<" "<<t<<endl;
+        	//cout<<"serial: "<<LY<<" "<<pnodesize<<" "<<s<<" "<<t<<endl;
 			for(int i=0;i<LY*nodenum;i++)
 			{
 				height[i]=0;
@@ -184,37 +184,45 @@ class dijkstor:public algbase{
 			}
 			for(int i=0;i<edges.size()*LY;i++)
 				esign[i]=1;
-			for(int i=0;i<edges.size()*LY;i++)
-				{
-					int rnd=rand()%100;
-					if(rnd<30)
-						esign[i]=0;
-				}
         	vector<int>ifhas(nodenum,0);
-        	vector<int>source(pnodesize,0);
-        	vector<int>ends(pnodesize,0);
+        	
         	int ccc=0;
-        	srand(0);
+        	srand(1);
         	for(int i=0;i<pnodesize;i++)
         	{
-        		int rr=rand()%100;
-        		if(rr<20)
+        		while(slen>0)
         			{
-        			    ccc++;
-        				source[i]=1;
-        				for(int k=0;k<LY;k++)
-        					{
-        					value[k*nodenum+i*W]=1;
-        					}
+        			int j=rand()%pnodesize;
+        			if(source[j]==0)
+        				{
+        					slen--;
+        					source[j]=1;
+        					for(int k=0;k<LY;k++)
+        						{
+        						value[k*nodenum+j*W]=1;
+        						}
+        				}
         			}
         	}
-        	cout<<" ccc is "<<ccc<<endl;
+        	///cout<<" ccc is "<<ccc<<endl;
         	for(int i=0;i<pnodesize;i++)
 			{
-				int rr=rand()%100;
-				if(rr<20&&source[i]==0)
-					ends[i]=1;
+        		while(tlen>0)
+					{
+					int j=rand()%pnodesize;
+					if(source[j]==0&&ends[j]==0)
+						{
+							ends[j]=1;
+							tlen--;
+						}
+					}
 			}
+        	for(int i=0;i<LY*edges.size();i++)
+        	{
+        		int ran=rand()%100;
+        		if(ran<30)
+        			esign[i]=0;
+        	}
         	start=clock();
         	int mark=1;
         	int cc=0;
@@ -251,10 +259,6 @@ class dijkstor:public algbase{
 									{
 										if(height[i]==height[to]+1)
 										{
-											if(height[i]>W+1&&fff==INT_MAX){
-												cout<<"time is "<<time-1<<endl;
-												fff=time;
-											}
 											value[i]--;
 											value[to]++;
 											//cout<<"push "<<i<<"to "<<to<<endl;
@@ -281,73 +285,85 @@ class dijkstor:public algbase{
         		cc++;
         	}
         	end=clock();
-        	//cout<<"this is "<<endl;
         	flow=0;
-        	for(int i=0;i<nodenum;i++)
+        	for(int i=0;i<nodenum*LY;i++)
         		if(value[i]!=0)
         			{
         				flow+=value[i];
         			}
-        	cout<<"flow is: "<<flow<<endl;
+        	cout<<"CPU flow is:"<<flow<<endl;
         	int count=0;
-        	
-        	for(int i=0;i<edges.size()*LY;i++) 
+        	for(int i=edges.size();i<edges.size()*2;i++) 
         		if(esign[i]<0)
         		{	count++;
-        			//cout<<i<<" "<<edges[i].s<<" "<<edges[i].t<<" "<<abs(esign[i])<<" "<<endl;
-        			/*for(int k=0;k<W;k++)
-        				cout<<height[edges[k].s*W+i]<<" ";
-        			cout<<endl;
-        			for(int k=0;k<W;k++)
-        			    cout<<height[edges[k].t*W+i]<<" ";*/
+        			int id=i%edges.size();
         		}
         		else
         			esign[i]=0;
-        	//cout<<"check r"<<endl;
-        	//checkhop(s,t);
-        	cout<<"CPU time is: "<<end-start<<endl;
-        	//cout<<"count is: "<<count<<endl;
-        	//cout<<"die is: "<<cc<<endl;
-        	//return make_pair(flow,end-start);
-        	int maxf=checkR(s,t);
-        	return make_pair(flow,maxf);
+        	cout<<"CPU time is:"<<end-start<<endl;
+        	//int maxf=checkR(s,t);
+        	return make_pair(flow,end-start);
         };
-        int checkhop(int s,int t)
+    	public:
+        int checkhop(int s,int t,vector<int>&esign,vector<int>&value,vector<int>&ends)
         {
+        	cout<<"in check"<<endl;
+        	cout<<nodenum<<endl;
         	int max=0;
-        	for(int k=0;k<LY;k++)
+        	for(int h=0;h<LY;h++)
         	{
-        		int nodeoff=k*nodenum;
-				for(int i=1;i<W;i++)
+        		cout<<"&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"<<endl;
+        		int nodeoff=h*nodenum;
+        		cout<<"in"<<endl;
+				for(int j=0;j<pnodesize;j++)
 				{
-					int tnode=nodeoff+t*W+i;
-					while(value[tnode]>0)
+					//cout<<"in "<<ends[j]<<endl;
+					if(ends[j]>0)
 					{
-						int node=tnode;
-						int off=i;
-						max=0;
-						while(off>0)
+						//cout<<"**********************route of "<<j<<":"<<endl;
+						for(int i=1;i<W;i++)
 						{
-							max++;
-							if(max>WD+1)
+							int tnode=nodeoff+j*W+i;
+							//cout<<"where"<<endl;
+							//cout<<(tnode%nodenum)/W<<" "<<tnode%W<<endl;
+							//cout<<tnode<<endl;
+							while(value[tnode]>0)
+							{
+								int node=tnode;
+								int off=i;
+								max=0;
+								cout<<node<<" ";
+								while(off>0)
 								{
-									cout<<"loop occurs,erro happened!"<<endl;
-									break;
+									max++;
+									if(max>WD+1)
+										{
+											//cout<<"loop occurs,erro happened!"<<endl;
+											//break;
+										}
+									//cout<<" "<<endl;
+									for(int k=0;k<nein[node].size();k++)
+										{
+										int eid=abs(neie[node][k])-1;
+										//cout<<edges[eid].s<<endl;
+										//cout<<eid<<" "<<esign[eid]<<" "<<neie[node][k]<<" "<<off<<endl;
+										//cout<<node<<endl;
+										if(neie[node][k]<0&&(-esign[eid]==off))
+											{
+											esign[eid]*=-1;
+											off=off-1;
+											node=edges[eid%edges.size()].s*W+off+nodeoff;
+											cout<<node<<" ";
+											//cout<<s<<endl;
+											break;
+											}
+										}
 								}
-							for(int k=0;k<nein[node].size();k++)
-								{
-								int eid=abs(neie[node][k])-1;
-								if(neie[node][k]<0&&(-esign[eid]==off))
-									{
-									esign[eid]*=-1;
-									off=off-1;
-									node=edges[eid].s*W+off;
-									break;
-									}
-								}
-							cout<<(node%nodenum)/W<<endl;
+								cout<<endl;
+								value[tnode]--;
+								//cout<<endl;
+							}
 						}
-						value[tnode]--;
 					}
 				}
         	}
@@ -624,6 +640,7 @@ class parallelpush:public algbase
 		int *ends;
 		void dellocate();
 		vector<vector<int>>ynein;
+		dijkstor* dilor;
 	public:
 		 parallelpush();
 	 	 void topsort(){};
@@ -631,6 +648,7 @@ class parallelpush:public algbase
 	 	 virtual bool cutcake(int index){};
 	     virtual pair<int,int> prepush(int s,int t,int bw);
 	 	 virtual void init(vector<edge>&extenedges,vector<vector<int>>&relate,ginfo);
+	 	 void fuzhi(dijkstor&d){dilor=&d;}
 	 	 virtual vector<int> routalg(int s,int t,int bw){};
 	 	 virtual ~parallelpush();
 };

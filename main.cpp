@@ -5,13 +5,15 @@ int main()
 {
 	ofstream outfile;
 	outfile.open("data.txt", ios::app);
-    parallelpush d1=parallelpush();
     dijkstor d2=dijkstor();
+    parallelpush d1=parallelpush();
+    d1.fuzhi(d2);
     double nflow=0;
     double nmxflow=0;
     int count=0;
-    ERGraph graph(100,1,d2,d1);
-    graph.prepush(0,5,400,outfile);
+    ERGraph graph(500,1,d2,d1);
+    //12,1,s=42//
+    graph.prepush(20,20,400,outfile);
    /* for(int n=100;n<5000;n*=2)
     	{	ERGraph graph(n,1,d2,d1);
     	   	double flow=0;

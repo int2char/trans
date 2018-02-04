@@ -51,7 +51,7 @@ class Graph
         };
         void extend()
         {
-        	cout<<edges.size()<<endl;
+        	//cout<<edges.size()<<endl;
         	vector<vector<int>>rs(edges.size(),vector<int>());
         	relate=rs;
         	vector<int>es(edges.size()*(width+1),-1);
@@ -105,9 +105,9 @@ class Graph
 class ERGraph:public Graph{
 public:
     ERGraph(int _n,int _degree,algbase&alg1,algbase&alg2):Graph(_n,_degree,alg1,alg2){
-    	cout<<"before gen graph"<<endl;
+    	//cout<<"before gen graph"<<endl;
     	GenGraph();
-    	cout<<"gen graph success"<<endl;
+    	//cout<<"gen graph success"<<endl;
     	extend();
     };
 private:

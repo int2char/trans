@@ -1,0 +1,144 @@
+cudaMemcpy(dev_h,h,LY*W*pnodesize*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_v,v,LY*W*pnodesize*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_esign,esign,LY*edges.size()*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_emark,emark,LY*edges.size()*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_ends,ends,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
+	cudaMemcpy(dev_source,source,pnodesize*sizeof(int),cudaMemcpyHostToDevice);
+	*mark=1;
+	int time=0;
+	//cout<<"max is "<<max<<endl;
+	time_t start,end;
+	start=clock();
+	int flag=0;
+	int fl2=1;
+	while(*mark!=0)
+	//for(int i=0;i<2;i++)
+	{
+		if(time%20==0)
+			{*mark=0;
+			cudaMemcpy(dev_mark,mark,sizeof(int),cudaMemcpyHostToDevice);}
+		push2<<<LY*nodenum/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_st,dev_te,dev_neie,nodenum,W,edges.size(),dev_mark,max,dev_source,dev_ends);
+		//push1<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,dev_esign,dev_emark,dev_neie,dev_nein,W*pnodesize,max,W,s,t,dev_mark);
+		//aggregate2<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,W,edges.size());
+		//cudaMemcpy(v,dev_v,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
+		//cudaMemcpy(h,dev_h,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
+		
+		
+		aggregate3<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,dev_st,dev_te,dev_h,W,edges.size(),W*pnodesize);
+		/*cudaMemcpy(emark,dev_emark,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
+		for(int i=0;i<LY*edges.size();i++)
+			if(emark[i]>0)
+				cout<<"gota... "<<i<<"s:"<<st[i]<<" "<<te[i]<<" "<<emark[i]<<endl;*/
+		//relable<<<LY*W*pnodesize/WORK_SIZE+1,WORK_SIZE>>>(dev_h,dev_v,W*pnodesize,dev_mark,dev_nein,dev_neie,dev_esign,max,W,s,t);
+		//aggregate2<<<LY*edges.size()/WORK_SIZE+1,WORK_SIZE>>>(dev_esign,dev_v,dev_emark,W,edges.size(),W*pnodesize,dev_mark);
+		if(time%20==0)
+			cudaMemcpy(mark,dev_mark,sizeof(int),cudaMemcpyDeviceToHost);
+		//cudaMemcpy(v,dev_v,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
+		//cudaMemcpy(h,dev_h,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
+		//cudaMemcpy(esign,dev_esign,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
+			/*if(time<742)
+			cout<<"************* "<<time<<endl;*/
+		/*for(int i=0;i<LY*W*pnodesize;i++)
+			if(v[i]!=0)
+				{
+					int bi=i%(W*pnodesize);
+					//if(bi/W==t)flow+=v[i];
+					if(time<733)
+						cout<<i<<"\t"<<h[i]<<"\t"<<v[i]<<endl;
+					if(fl2>0&&i==18&&h[i]>W+1)
+					{
+						cout<<"time is "<<time<<endl;
+						cout<<"what happened"<<endl;
+						cout<<v[i]<<endl;
+						fl2=-1;
+					}
+					/*if(i==319)
+					{
+						for(int j=0;j<max;j++)
+							if(nein[i*max+j]<INT_MAX)
+								cout<<neie[i*max+j]<<" "<<esign[abs(neie[i*max+j])-1]<<" "<<h[nein[i*max+j]]<<endl;
+					}*/
+				//}
+		//cout<<"mark "<<*mark<<endl;
+		time++;
+	}
+	cudaMemcpy(mark,dev_mark,sizeof(int),cudaMemcpyDeviceToHost);
+	end=clock();
+	cudaMemcpy(v,dev_v,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
+	cudaMemcpy(h,dev_h,LY*W*pnodesize*sizeof(int),cudaMemcpyDeviceToHost);
+	int flow=0;
+	for(int i=0;i<LY*W*pnodesize;i++)
+		if(v[i]!=0)
+			{
+				int bi=i%(W*pnodesize);
+				if(ends[bi/W]==1)flow+=v[i];
+				//cout<<i/(W*pnodesize)<<" "<<bi<<" "<<bi/W<<" "<<bi%W<<" "<<h[i]<<" "<<v[i]<<endl;
+			}
+	
+	cudaMemcpy(esign,dev_esign,LY*edges.size()*sizeof(int),cudaMemcpyDeviceToHost);
+	for(int i=0;i<edges.size();i++)
+	{        			int id=i%edges.size();
+
+		//if(esign[i]<0)
+		//	cout<<edges[id].s<<" "<<edges[id].t<<abs(esign[id])<<endl;
+	}
+	int count=0;
+	for(int i=0;i<edges.size()*LY;i++)
+		if(esign[i]<0)
+			count++;
+	vector<int>checkor;
+	for(int i=0;i<LY*edges.size();i++)
+		{
+			if(esign[i]>=0)esign[i]=0;
+			checkor.push_back(esign[i]);
+		}
+	cudaMemcpy(v,dev_v,LY*nodenum*sizeof(int),cudaMemcpyDeviceToHost);
+	vector<int>value;
+	for(int i=0;i<nodenum*LY;i++)
+	{
+		value.push_back(v[i]);
+	}
+	vector<int>endss;
+	for(int i=0;i<pnodesize;i++)
+		endss.push_back(ends[i]);
+	//dilor->checkhop(0,0,checkor,value,endss);
+	
+	//cout<<"resort"<<endl;
+	/*for(int i=0;i<edges.size();i++)
+		{
+			if(esign[i]<0)
+			{
+				int sorce=edges[i].t*W;
+				if(sorce/W==t)
+				{
+					int pre=edges[i].s*W;
+					cout<<pre<<" ";
+					while((pre/W)!=s)
+					{
+						int flag=0;
+						for(int h=0;h<W;h++)
+						{
+							pre++;
+							for(int k=0;k<max;k++)
+								{
+									if(nein[pre*max+k]<INT_MAX)
+										if(esign[abs(neie[pre*max+k])-1]<0&&neie[pre*max+k]<0)
+										{
+											esign[abs(neie[pre*max+k])-1]*=-1;
+											pre=edges[abs(neie[pre*max+k])-1].s*W;
+											cout<<pre<<" ";
+											flag=1;
+										}
+										if(flag==1)break;
+								}
+							if(flag==1)break;
+						}
+					}
+					cout<<endl;
+				}
+			}
+		}*/
+	cout<<"GPU flow is:"<<flow<<endl;
+	cout<<"GPU time is: "<<end-start<<endl;
+	//cout<<"count is "<<count<<endl;
+	//cout<<"die is "<<time<<endl;
