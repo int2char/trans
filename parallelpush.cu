@@ -71,7 +71,7 @@ __global__ void push2(int*dev_h,int*dev_v,int* dev_esign,int* dev_emark,int*st,i
 	int bi=i%N;
 	int value=dev_v[i];
 	int node=bi/W;
-	if(i>=N*LY||value==0||dev_ends[node]==1)return;
+	if(i>=N*LY||value==0||dev_ends[node]==1||dev_h[i]>2*W+1)return;
 	if(bi%W==0&&dev_h[i]>W+1&&dev_source[node]==1){dev_v[i]=0;return;}
 	int ly=i/N;
 	int off=i%W;

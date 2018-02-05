@@ -223,7 +223,7 @@ class dijkstor:public algbase{
         	for(int i=0;i<LY*edges.size();i++)
         	{
         		int ran=rand()%100;
-        		if(ran<90)
+        		if(ran<50)
         			esign[i]=0;
         	}
         	start=clock();
